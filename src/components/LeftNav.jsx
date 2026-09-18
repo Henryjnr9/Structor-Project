@@ -23,7 +23,7 @@ export default function LeftNav({
   // --- MAP & PINS PROPS ---
   maps = [],
   activeMapName = "Maps",
-  onRenameMap,
+  onRenameMap, // Synchronizes map renaming with App.jsx
   pins = [],
   selectedPinId = null,
   onSelectPin,
@@ -41,6 +41,10 @@ export default function LeftNav({
 
   // Entity Creation & Context Menu state
   const [isEntityMenuOpen, setIsEntityMenuOpen] = useState(false);
+  const [entityMenuPosition, setEntityMenuPosition] = useState({
+    top: 140,
+    left: 293,
+  });
   const [expandedGroups, setExpandedGroups] = useState({});
   const [expandedMapGroups, setExpandedMapGroups] = useState({});
 
@@ -69,7 +73,7 @@ export default function LeftNav({
   const entityRenameInputRef = useRef(null);
   const pinRenameInputRef = useRef(null);
 
-  // renaming map title
+  // Renaming map title state
   const [renamingMapTitle, setRenamingMapTitle] = useState(null);
   const [tempMapInput, setTempMapInput] = useState("");
   const mapRenameInputRef = useRef(null);
@@ -100,15 +104,21 @@ export default function LeftNav({
     });
   }, [mapGroupNames]);
 
-  // Tab auto-sync
+  // Tab auto-sync when a pin is selected
   useEffect(() => {
-    if (selectedPinId) setActiveTab("Maps");
+    if (selectedPinId) {
+      setActiveTab("Maps");
+    }
   }, [selectedPinId]);
 
+  // Tab auto-sync when an entity is selected
   useEffect(() => {
-    if (selectedEntity) setActiveTab("Entities");
+    if (selectedEntity) {
+      setActiveTab("Entities");
+    }
   }, [selectedEntity]);
 
+  // Focus on project rename input
   useEffect(() => {
     if (isRenaming && renameInputRef.current) {
       renameInputRef.current.focus();
@@ -116,6 +126,7 @@ export default function LeftNav({
     }
   }, [isRenaming]);
 
+  // Focus on entity item rename input
   useEffect(() => {
     if (renamingEntityId && entityRenameInputRef.current) {
       entityRenameInputRef.current.focus();
@@ -123,6 +134,7 @@ export default function LeftNav({
     }
   }, [renamingEntityId]);
 
+  // Focus on location pin rename input
   useEffect(() => {
     if (renamingPinId && pinRenameInputRef.current) {
       pinRenameInputRef.current.focus();
@@ -130,6 +142,7 @@ export default function LeftNav({
     }
   }, [renamingPinId]);
 
+  // Focus on map group rename input
   useEffect(() => {
     if (renamingMapTitle && mapRenameInputRef.current) {
       mapRenameInputRef.current.focus();
@@ -333,7 +346,7 @@ export default function LeftNav({
       </div>
 
       {/* 4. Tab Content Area */}
-      <div className="w-full flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="w-full flex-1 flex flex-col min-h-0">
         {/* ================= MAPS TAB: GROUPED BY MAP NAME ================= */}
         {activeTab === "Maps" && (
           <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2">
@@ -496,22 +509,33 @@ export default function LeftNav({
         {/* ================= ENTITIES TAB ================= */}
         {activeTab === "Entities" && (
           <div className="w-full flex-1 flex flex-col min-h-0">
-            <div className="flex items-center justify-between w-full pb-3 shrink-0">
+            <div className="flex items-center justify-between w-full pb-3 shrink-0 relative z-30">
               <span className="text-xs font-semibold text-neutral-200">
                 Entities
               </span>
-              <div className="relative flex items-center">
+
+              {/* Add Entity (+) button & Dropdown container */}
+              <div className="relative group flex items-center">
                 <button
-                  onClick={() => setIsEntityMenuOpen(!isEntityMenuOpen)}
-                  className="text-neutral-400 hover:text-white p-1 rounded hover:bg-[#2E2E2E] transition-colors cursor-pointer"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    // Accurately capture top of plus button and position at 293px (8px outside LeftNav)
+                    setEntityMenuPosition({ top: rect.top, left: 293 });
+                    setIsEntityMenuOpen((prev) => !prev);
+                  }}
+                  className="text-neutral-400 hover:text-white p-1 rounded hover:bg-[#2E2E2E] transition-colors cursor-pointer outline-none focus:outline-none"
                 >
                   <Icon name="plus" size={16} />
                 </button>
-                <SelectEntityMenu
-                  isOpen={isEntityMenuOpen}
-                  onClose={() => setIsEntityMenuOpen(false)}
-                  onSelectEntity={handleCreateEntity}
-                />
+
+                {/* Hover Tooltip: Restored above the plus button */}
+                {!isEntityMenuOpen && (
+                  <div className="absolute right-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center bg-[#1C1C1C] border border-[#2E2E2E] px-2 py-1 rounded-[6px] text-[10px] font-medium text-neutral-200 shadow-xl pointer-events-none whitespace-nowrap z-50">
+                    Add Entity
+                  </div>
+                )}
               </div>
             </div>
 
@@ -658,6 +682,25 @@ export default function LeftNav({
           </div>
         )}
       </div>
+
+      {/* ================= FIXED SELECT ENTITY MENU (ALIGNED WITH PLUS ICON & 8px SPACING) ================= */}
+      {isEntityMenuOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: `${entityMenuPosition.top}px`,
+            left: "293px",
+            zIndex: 9999,
+          }}
+        >
+          <SelectEntityMenu
+            isOpen={isEntityMenuOpen}
+            onClose={() => setIsEntityMenuOpen(false)}
+            onSelectEntity={handleCreateEntity}
+            className="!static !left-0 !top-0"
+          />
+        </div>
+      )}
 
       {/* ================= SHARED ENTITY CONTEXT MENU (Handles Entities & Location Pins) ================= */}
       {activeMenuEntity && (
