@@ -177,7 +177,6 @@ export default function App() {
           setSelectedPin(null);
         }}
       />
-
       {/* 2. Main Center Workspace */}
       <main className="flex-1 relative h-full overflow-hidden">
         {!selectedEntity ? (
@@ -216,7 +215,6 @@ export default function App() {
           />
         )}
       </main>
-
       {/* 3. Right Navigation */}
       <RightNav
         selectedEntity={selectedEntity}

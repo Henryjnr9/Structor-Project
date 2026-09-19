@@ -34,7 +34,7 @@ export default function LeftNav({
   const [activeTab, setActiveTab] = useState("Maps");
 
   // Project Name & Renaming state
-  const [projectName, setProjectName] = useState("HNG Stage 6 fiction");
+  const [projectName, setProjectName] = useState("Untitled World");
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempName, setTempName] = useState(projectName);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
