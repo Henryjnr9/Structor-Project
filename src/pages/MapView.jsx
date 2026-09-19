@@ -134,6 +134,17 @@ export default function MapView({
     };
   }, [isDragging]);
 
+  // Escape key to deselect pin
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onDeselectPin?.();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onDeselectPin]);
+
   // Drop a Pin tagged with activeMapName
   const handleMapClick = (e) => {
     if (isDragging) return;
@@ -153,15 +164,15 @@ export default function MapView({
         links: [],
         zoomMin: 0,
         zoomMax: 100,
-        mapName: activeMapName || "Maps", // 👈 Automatically tags with active map
+        mapName: activeMapName || "Maps",
       };
 
       onAddPin?.(newPin);
-    } else if (activeTool === "move") {
+    } else {
+      // 👈 Clicking canvas with any other tool resets pin to empty state!
       onDeselectPin?.();
     }
   };
-
   const TOOL_HINTS = {
     pin: {
       text: "Click on any part of the map to pin or create a Location",
@@ -287,7 +298,12 @@ export default function MapView({
                     style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onSelectPin?.(pin);
+                      // 👈 Clicking an already-selected pin toggles it off back to empty state!
+                      if (selectedPinId === pin.id) {
+                        onDeselectPin?.();
+                      } else {
+                        onSelectPin?.(pin);
+                      }
                     }}
                     className="absolute -translate-x-1/2 -translate-y-full z-20 cursor-pointer group"
                     title={pin.name}
