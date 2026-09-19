@@ -164,15 +164,15 @@ export default function MapView({
         links: [],
         zoomMin: 0,
         zoomMax: 100,
-        mapName: activeMapName || "Maps",
+        mapName: activeMapName || "Maps", // 👈 Automatically tags with active map
       };
 
       onAddPin?.(newPin);
-    } else {
-      // 👈 Clicking canvas with any other tool resets pin to empty state!
+    } else if (activeTool === "move") {
       onDeselectPin?.();
     }
   };
+
   const TOOL_HINTS = {
     pin: {
       text: "Click on any part of the map to pin or create a Location",
@@ -298,12 +298,7 @@ export default function MapView({
                     style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // 👈 Clicking an already-selected pin toggles it off back to empty state!
-                      if (selectedPinId === pin.id) {
-                        onDeselectPin?.();
-                      } else {
-                        onSelectPin?.(pin);
-                      }
+                      onSelectPin?.(pin);
                     }}
                     className="absolute -translate-x-1/2 -translate-y-full z-20 cursor-pointer group"
                     title={pin.name}
@@ -351,7 +346,7 @@ export default function MapView({
         isOpen={isAssetModalOpen}
         onClose={() => setIsAssetModalOpen(false)}
         onSelectMap={(mapUrl) => {
-          setMapImage(mapUrl);
+          setMapImage(mapUrl); // 👈 Sets the image
           onMapLoaded?.(activeMapName);
         }}
       />

@@ -20,6 +20,16 @@ export default function App() {
   const [maps, setMaps] = useState(["Maps"]);
   const [activeMapName, setActiveMapName] = useState("Maps");
 
+  // 👈 1. Store map images at the App level (preserves across tabs & multiple maps)
+  const [mapImages, setMapImages] = useState({});
+
+  const handleUpdateMapImage = (imageUrl) => {
+    setMapImages((prev) => ({
+      ...prev,
+      [activeMapName]: imageUrl,
+    }));
+  };
+
   // Robust rename handler: works with onRenameMap(newName) OR onRenameMap(oldName, newName)
   const handleRenameMap = (arg1, arg2) => {
     const oldName = (arg2 !== undefined ? arg1 : activeMapName) || "Maps";
@@ -39,6 +49,14 @@ export default function App() {
     if (activeMapName === oldName || !maps.includes(activeMapName)) {
       setActiveMapName(cleanNewName);
     }
+
+    // Keep the uploaded image attached when map is renamed
+    setMapImages((prev) => {
+      if (!prev[oldName]) return prev;
+      const updated = { ...prev, [cleanNewName]: prev[oldName] };
+      delete updated[oldName];
+      return updated;
+    });
 
     // 3. Update all pins belonging to this map
     setPins((prev) =>
@@ -180,40 +198,46 @@ export default function App() {
       />
       {/* 2. Main Center Workspace */}
       <main className="flex-1 relative h-full overflow-hidden">
-        {!selectedEntity ? (
-          <>
-            <MapView
-              maps={maps}
-              activeMapName={activeMapName}
-              onRenameMap={handleRenameMap}
-              onAddNewMap={handleAddNewMap}
-              onSelectMapTab={(mapName) => setActiveMapName(mapName)}
-              pins={pins}
-              selectedPinId={selectedPin?.id}
+        {/* Map View & Bottom Nav: Kept alive in memory so the uploaded map NEVER disappears! */}
+        <div
+          className={`w-full h-full relative ${selectedEntity ? "hidden" : "block"}`}
+        >
+          <MapView
+            maps={maps}
+            activeMapName={activeMapName}
+            onRenameMap={handleRenameMap}
+            onAddNewMap={handleAddNewMap}
+            onSelectMapTab={(mapName) => setActiveMapName(mapName)}
+            pins={pins}
+            selectedPinId={selectedPin?.id}
+            activeTool={mapTool}
+            zoom={mapZoom}
+            onZoomChange={(newZoom) => setMapZoom(newZoom)}
+            onAddPin={handleAddPin}
+            onSelectPin={(pin) => setSelectedPin(pin)}
+            onDeselectPin={() => setSelectedPin(null)}
+          />
+
+          {/* Floating Bottom Nav */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
+            <BottomNav
+              mode="map"
               activeTool={mapTool}
+              onToolSelect={(tool) => setMapTool(tool)}
               zoom={mapZoom}
               onZoomChange={(newZoom) => setMapZoom(newZoom)}
-              onAddPin={handleAddPin}
-              onSelectPin={(pin) => setSelectedPin(pin)}
-              onDeselectPin={() => setSelectedPin(null)}
             />
+          </div>
+        </div>
 
-            {/* Floating Bottom Nav */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
-              <BottomNav
-                mode="map"
-                activeTool={mapTool}
-                onToolSelect={(tool) => setMapTool(tool)}
-                zoom={mapZoom}
-                onZoomChange={(newZoom) => setMapZoom(newZoom)}
-              />
-            </div>
-          </>
-        ) : (
-          <EntityView
-            entity={selectedEntity}
-            onUpdateEntity={handleUpdateEntity}
-          />
+        {/* Entity View: Rendered when an entity is actively selected */}
+        {selectedEntity && (
+          <div className="w-full h-full absolute inset-0 bg-[#0e0e10]">
+            <EntityView
+              entity={selectedEntity}
+              onUpdateEntity={handleUpdateEntity}
+            />
+          </div>
         )}
       </main>
       {/* 3. Right Navigation */}
