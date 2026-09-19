@@ -64,6 +64,7 @@ export default function App() {
       setGroups((prev) => [...prev, newEntity.typeId]);
     }
     setSelectedEntity(newEntity);
+    setSelectedPin(null);
   };
 
   const handleUpdateEntity = (updated) => {
