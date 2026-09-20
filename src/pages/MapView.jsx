@@ -202,7 +202,7 @@ export default function MapView({
       }`}
     >
       {/* 1. Page Header & Sub-Tabs */}
-      <div className="absolute top-[52px] z-20 w-[801px] max-w-full px-4 flex flex-col gap-2 pointer-events-auto">
+      <div className="absolute top-[52px] z-20 px] w-full max-w-[801px] px-4 flex flex-col gap-2 pointer-events-auto">
         <PageHeader
           key={activeMapName} // Re-syncs header whenever renamed externally
           title={activeMapName}

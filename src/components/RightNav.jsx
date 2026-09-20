@@ -103,7 +103,7 @@ export default function RightSidebar({
   const isRegion = selectedPin?.isRegion || activeTool === "pen";
 
   return (
-    <aside className="w-[305px] h-screen bg-[#141416] text-zinc-100 border-l border-[#27272a] flex flex-col select-none shrink-0 relative">
+    <aside className="w-[305px] h-full bg-[#141416] text-zinc-100 border-l border-[#27272a] flex flex-col select-none shrink-0 relative">
       {/* 1. Header (Shared across Entity View & Map View) */}
       <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#27272a] relative shrink-0">
         {/* Avatar & Chevron */}

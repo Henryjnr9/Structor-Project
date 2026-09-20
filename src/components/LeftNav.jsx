@@ -228,7 +228,7 @@ export default function LeftNav({
   };
 
   return (
-    <aside className="w-[285px] h-screen bg-[#1C1C1C] text-zinc-100 border-r border-[#2E2E2E] flex flex-col items-start gap-[24px] p-[0_16px_40px_16px] pt-4 select-none shrink-0 relative">
+    <aside className="w-[285px] h-full bg-[#1C1C1C] text-zinc-100 border-r border-[#2E2E2E] flex flex-col items-start gap-[24px] p-[0_16px_40px_16px] pt-4 select-none shrink-0 relative">
       <input
         ref={fileInputRef}
         type="file"

@@ -40,7 +40,7 @@ export default function PageHeader({
   };
 
   return (
-    <header className="w-[801px] flex items-center justify-between select-none">
+    <header className="w-full flex items-center justify-between select-none">
       {/* Map and map icon container */}
       <div className="flex items-center gap-[8px] min-w-0 flex-1">
         {/* Map icon (36px x 36px) */}

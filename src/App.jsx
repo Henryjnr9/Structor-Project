@@ -162,7 +162,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#0e0e10] text-zinc-100">
+    <div className="flex h-full w-full overflow-hidden bg-[#0e0e10] text-zinc-100">
       {/* 1. Left Navigation */}
       <LeftNav
         entities={entities}

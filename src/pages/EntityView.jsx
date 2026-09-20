@@ -91,7 +91,7 @@ export default function EntityView({ entity, onUpdateEntity }) {
       />
 
       {/* Main Document Column: 801px width, 52px from top */}
-      <div className="w-[801px] max-w-full flex flex-col gap-6 pt-[52px] z-10 px-4 h-full overflow-y-auto">
+      <div className="w-full max-w-[801px] flex flex-col gap-6 pt-[52px] z-10 px-4 h-full overflow-y-auto">
         {/* Header */}
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-[10px] min-w-0 flex-1">
