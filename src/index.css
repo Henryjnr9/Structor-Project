@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Sora", sans-serif;
+  --font-sans: "Open Sauce Sans", sans-serif;
 }
 
 body,
@@ -9,11 +9,12 @@ button,
 input,
 textarea,
 select {
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-sans);
+  letter-spacing: 0.12px;
 }
 
 html {
-  zoom: 0.86;
+  zoom: 0.9;
 }
 
 html,
